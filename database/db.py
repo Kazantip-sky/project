@@ -17,7 +17,7 @@ def init_db():
                             coins   INTEGER DEFAULT 0,
                             class   TEXT
                         );
-                        CREATE TABLE IF NOT EXISTS transactiSons (
+                        CREATE TABLE IF NOT EXISTS transactions (
                             id         INTEGER PRIMARY KEY AUTOINCREMENT,
                             student_id INTEGER NOT NULL,
                             amount     INTEGER NOT NULL,
