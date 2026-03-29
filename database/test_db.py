@@ -1,4 +1,4 @@
-from database.db import init_db, create_student, get_all_students
+from db import init_db, create_student, get_all_students
 
 init_db()
 create_student('Артем', '10А')

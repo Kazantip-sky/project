@@ -13,14 +13,14 @@ def init_db():
     cursor.executescript('''
                         CREATE TABLE IF NOT EXISTS students (
                             id      INTEGER PRIMARY KEY AUTOINCREMENT,
-                            name    TEXT    NOT FULL,
+                            name    TEXT    NOT NULL,
                             coins   INTEGER DEFAULT 0,
                             class   TEXT
                         );
-                        CREATE TABLE IF NOT EXISTS transactions (
+                        CREATE TABLE IF NOT EXISTS transactiSons (
                             id         INTEGER PRIMARY KEY AUTOINCREMENT,
-                            student_id INTEGER NOT FULL,
-                            amount     INTEGER NOT FULL,
+                            student_id INTEGER NOT NULL,
+                            amount     INTEGER NOT NULL,
                             reason     TEXT,
                             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (student_id) REFERENCES students(id)
