@@ -1,0 +1,51 @@
+<div class="item-card {% if not item.is_active %}item-card--inactive{% endif %} {% if item.quantity == 0 %}item-card--sold-out{% endif %}"
+     data-category-id="{{ item.category_id }}">
+
+    {% if item.quantity == 0 %}
+        <div class="item-badge item-badge--sold-out">Нет в наличии</div>
+    {% elif item.quantity > 0 and item.quantity <= 3 %}
+        <div class="item-badge item-badge--low-stock">Осталось: {{ item.quantity }}</div>
+    {% endif %}
+
+    <div class="item-card__image">
+        {% if item.image_url %}
+            <img src="{{ item.image_url }}" alt="{{ item.name }}">
+        {% else %}
+            <div class="item-card__image-placeholder">
+                <span>🎁</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="item-card__body">
+        {% if item.category %}
+            <span class="item-card__category">{{ item.category }}</span>
+        {% endif %}
+        <h3 class="item-card__name">{{ item.name }}</h3>
+        {% if item.description %}
+            <p class="item-card__desc">{{ item.description }}</p>
+        {% endif %}
+    </div>
+
+    <div class="item-card__footer">
+        <span class="item-card__price">
+            <span class="coin-icon">🪙</span>{{ item.price }}
+        </span>
+
+        {% if item.quantity != 0 and item.is_active %}
+            <form action="/shop/buy" method="post" class="item-card__form">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <input type="hidden" name="student_id" value="{{ student.id }}">
+                <button
+                    type="submit"
+                    class="btn-buy {% if student.coins < item.price %}btn-buy--disabled{% endif %}"
+                    {% if student.coins < item.price %}disabled title="Недостаточно монет"{% endif %}
+                >
+                    {% if student.coins < item.price %}Не хватает{% else %}Купить{% endif %}
+                </button>
+            </form>
+        {% else %}
+            <button class="btn-buy btn-buy--disabled" disabled>Недоступно</button>
+        {% endif %}
+    </div>
+</div>

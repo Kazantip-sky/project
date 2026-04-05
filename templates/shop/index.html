@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Магазин монет{% endblock %}
+
+{% block content %}
+
+<!-- ── Шапка магазина ──────────────────────────────────────── -->
+<div class="shop-hero">
+    <div>
+        <h1 class="shop-hero__title">🏪 Магазин <span>монет</span></h1>
+        <p class="shop-hero__subtitle">Трать монеты с умом — выбирай лучшее!</p>
+    </div>
+
+    {% if student %}
+    <div class="balance-card">
+        <div class="balance-card__icon">🪙</div>
+        <div>
+            <div class="balance-card__label">Баланс</div>
+            <div class="balance-card__amount">{{ student.coins }}</div>
+            <div class="balance-card__name">{{ student.name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- ── Flash-сообщения ─────────────────────────────────────── -->
+{% if message %}
+<div class="flash flash--{{ message_type | default('success') }}">
+    <span class="flash__icon">
+        {% if message_type == 'error' %}❌{% else %}✅{% endif %}
+    </span>
+    {{ message }}
+    <button class="flash__close" onclick="this.parentElement.remove()">✕</button>
+</div>
+{% endif %}
+
+<!-- ── Фильтры категорий ───────────────────────────────────── -->
+{% if categories %}
+<div class="shop-filters">
+    <button class="filter-btn active" data-category="all">Все</button>
+    {% for cat in categories %}
+        <button class="filter-btn" data-category="{{ cat.id }}">{{ cat.name }}</button>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- ── Сетка товаров ───────────────────────────────────────── -->
+<div class="items-grid" id="items-grid">
+    {% if items %}
+        {% for item in items %}
+            {% include 'shop/item_card.html' %}
+        {% endfor %}
+    {% else %}
+        <div class="shop-empty">
+            <div class="shop-empty__icon">🛒</div>
+            <h3>Магазин пока пуст</h3>
+            <p>Товары скоро появятся!</p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
