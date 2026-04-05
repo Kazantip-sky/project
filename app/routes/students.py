@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Form, Request
 from fastapi.templating import Jinja2Templates
-from database.db import get_all_students
+from database.db import create_student, get_all_students
 from fastapi.responses import RedirectResponse
 
 router = APIRouter()
