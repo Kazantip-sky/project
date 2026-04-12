@@ -1,6 +1,12 @@
 <div class="student-card">
     <h2>{{ student.name }}</h2>
-    <span class="coins">{{ student.coint }} монет</span>
+    <span class="coins">{{ student.coins }} монет</span>
     <span class="class">{{ student.class }}</span>
     <a href="/students/{{ student.id }}">Подробнее</a>
+
+    <form action="/student/delete" method="post"
+          onsubmit="return confirm('Удалить {{ student.name }}?')">
+        <input type="hidden" name="student_id" value="{{ student.id }}">
+        <button type="submit" class="btn-delete">🗑 Удалить</button>
+    </form>
 </div>

@@ -26,14 +26,13 @@ def root():
 
 @app.get("/shop")
 def shop_page(request: Request):
-    items = get_all_items()
     students = get_all_students()
     student = students[0] if students else None
     return templates.TemplateResponse(request, "shop/index.html", {
         "items": get_all_items(),
-        "student": None,
-        "message": result["error"],
-        "message_type": "error"
+        "student": student,     
+        "message": None,          
+        "message_type": None
     })
 
 @app.post("/shop/buy")

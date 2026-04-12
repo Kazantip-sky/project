@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ student.name }}{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <h1>{{ student.name }}</h1>
+    <a href="/students" class="btn">← Назад</a>
+</section>
+
+<!-- Основная информация -->
+<div class="student-detail-card">
+    <div class="student-detail-info">
+        <div class="detail-row">
+            <span class="detail-label">Класс</span>
+            <span class="detail-value">{{ student.class or '—' }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Монеты</span>
+            <span class="detail-value coins">🪙 {{ student.coins }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">ID</span>
+            <span class="detail-value">#{{ student.id }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Покупки -->
+<section class="detail-section">
+    <h2>🛒 Покупки</h2>
+    {% if purchases %}
+        <table class="detail-table">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Потрачено</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in purchases %}
+                <tr>
+                    <td>{{ p.name }}</td>
+                    <td>🪙 {{ p.price_paid }}</td>
+                    <td>{{ p.purchased_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="detail-empty">Покупок пока нет.</p>
+    {% endif %}
+</section>
+
+<!-- История транзакций -->
+<section class="detail-section">
+    <h2>📋 История транзакций</h2>
+    {% if transactions %}
+        <table class="detail-table">
+            <thead>
+                <tr>
+                    <th>Сумма</th>
+                    <th>Причина</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr>
+                    <td class="{% if t.amount > 0 %}amount-plus{% else %}amount-minus{% endif %}">
+                        {% if t.amount > 0 %}+{% endif %}{{ t.amount }} 🪙
+                    </td>
+                    <td>{{ t.reason or '—' }}</td>
+                    <td>{{ t.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="detail-empty">Транзакций пока нет.</p>
+    {% endif %}
+</section>
+
+<style>
+.student-detail-card {
+    background: var(--card-bg, #fff);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-label {
+    font-weight: 600;
+    color: #888;
+    min-width: 100px;
+}
+
+.detail-value { font-size: 1.1rem; }
+.detail-value.coins { font-weight: 700; color: #f59e0b; font-size: 1.2rem; }
+
+.detail-section { margin-bottom: 32px; }
+.detail-section h2 { margin-bottom: 12px; }
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg, #fff);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.detail-table th {
+    text-align: left;
+    padding: 12px 16px;
+    background: #f8f8f8;
+    color: #555;
+    font-weight: 600;
+}
+
+.detail-table td {
+    padding: 12px 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.amount-plus { color: #16a34a; font-weight: 700; }
+.amount-minus { color: #dc2626; font-weight: 700; }
+
+.detail-empty {
+    color: #aaa;
+    font-style: italic;
+    padding: 16px 0;
+}
+</style>
+
+{% endblock %}
