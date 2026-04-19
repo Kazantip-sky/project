@@ -42,12 +42,13 @@ def student_detail(request: Request, student_id: int, user: dict = Depends(requi
 @router.post('/student/add')
 def add_student(
     name: str = Form(...),
-    class_name: str = Form(...),
+    group_id: int = Form(...), 
+    login: str = Form(None),     
+    password: str = Form(None),  
     user: dict = Depends(require_admin),
 ):
-    create_student(name, class_name)
+    create_student(name, group_id, login, password)
     return RedirectResponse('/students', status_code=303)
-
 
 @router.post('/student/delete')
 def remove_student(

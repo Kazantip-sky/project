@@ -24,10 +24,14 @@ def init_db():
     cursor = conn.cursor()
     cursor.executescript('''
         CREATE TABLE IF NOT EXISTS students (
-            id      INTEGER PRIMARY KEY AUTOINCREMENT,
-            name    TEXT    NOT NULL,
-            coins   INTEGER DEFAULT 0,
-            class   TEXT
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            name       TEXT    NOT NULL,
+            coins      INTEGER DEFAULT 0,
+            id_group   INTEGER,          
+            attendance TEXT,          
+            login      TEXT,              
+            password   TEXT,             
+            created_by INTEGER
         );
         CREATE TABLE IF NOT EXISTS transactions (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,9 +52,9 @@ def init_db():
         CREATE TABLE IF NOT EXISTS teacher_classes (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
             teacher_id INTEGER NOT NULL,
-            class_name TEXT NOT NULL,
+            group_id   INTEGER NOT NULL,   -- было class_name
             FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE,
-            UNIQUE(teacher_id, class_name)
+            UNIQUE(teacher_id, group_id)
         );
         CREATE TABLE IF NOT EXISTS shop_categories (
             id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -167,35 +171,33 @@ def get_teacher_by_id(teacher_id: int) -> sqlite3.Row | None:
     return teacher
 
 
-def get_teacher_classes(teacher_id: int):
+def get_teacher_groups(teacher_id: int):   
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT class_name FROM teacher_classes WHERE teacher_id = ?',
+        'SELECT group_id FROM teacher_classes WHERE teacher_id = ?',
         (teacher_id,)
     )
-    classes = cursor.fetchall()
+    groups = cursor.fetchall()
     conn.close()
-    return classes
+    return groups
 
-
-def assign_teacher_to_class(teacher_id: int, class_name: str):
+def assign_teacher_to_group(teacher_id: int, group_id: int):   
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT OR IGNORE INTO teacher_classes (teacher_id, class_name) VALUES (?, ?)',
-        (teacher_id, class_name)
+        'INSERT OR IGNORE INTO teacher_classes (teacher_id, group_id) VALUES (?, ?)',
+        (teacher_id, group_id)
     )
     conn.commit()
     conn.close()
 
-
-def remove_teacher_from_class(teacher_id: int, class_name: str):
+def remove_teacher_from_group(teacher_id: int, group_id: int): 
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'DELETE FROM teacher_classes WHERE teacher_id = ? AND class_name = ?',
-        (teacher_id, class_name)
+        'DELETE FROM teacher_classes WHERE teacher_id = ? AND group_id = ?',
+        (teacher_id, group_id)
     )
     conn.commit()
     conn.close()
@@ -211,12 +213,12 @@ def delete_teacher(teacher_id: int):
 
 # ── students ──────────────────────────────────────────────────────────────────
 
-def create_student(name: str, class_name: str):
+def create_student(name: str, group_id: int = None, login: str = None, password: str = None):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO students (name, class) VALUES(?, ?)',
-        (name, class_name)
+        'INSERT INTO students (name, id_group, login, password) VALUES (?, ?, ?, ?)',
+        (name, group_id, login, password)
     )
     conn.commit()
     conn.close()
@@ -225,13 +227,13 @@ def create_student(name: str, class_name: str):
 def get_all_students():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM students')
+    cursor.execute('SELECT * FROM students') 
     students = cursor.fetchall()
     conn.close()
     return students
 
 
-def get_student_by_id(student_id: int): 
+def get_student_by_id(student_id: int):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM students WHERE id = ?', (student_id,))
@@ -251,28 +253,19 @@ def delete_student(student_id: int):
 def add_coins_by_teacher(teacher_id: int, student_id: int, amount: int, reason: str):
     conn = get_connection()
     cursor = conn.cursor()
-
     cursor.execute('''
         SELECT 1 FROM students s
-        JOIN teacher_classes tc ON s.class = tc.class_name
+        JOIN teacher_classes tc ON s.id_group = tc.group_id
         WHERE s.id = ? AND tc.teacher_id = ?
     ''', (student_id, teacher_id))
-
     if cursor.fetchone():
-        cursor.execute(
-            'UPDATE students SET coins = coins + ? WHERE id = ?',
-            (amount, student_id)
-        )
+        cursor.execute('UPDATE students SET coins = coins + ? WHERE id = ?', (amount, student_id))
         cursor.execute('''
             INSERT INTO transactions (student_id, amount, reason, created_by)
             VALUES (?, ?, ?, ?)
         ''', (student_id, amount, reason, teacher_id))
         conn.commit()
-    else:
-        pass 
-
     conn.close()
-
 
 def get_student_transactions(student_id: int):
     conn = get_connection()

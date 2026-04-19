@@ -7,9 +7,9 @@ from database.db import (
     get_teacher_by_id,
     create_user,
     delete_teacher,
-    assign_teacher_to_class,
-    get_teacher_classes,
-    remove_teacher_from_class,
+    assign_teacher_to_group,   
+    get_teacher_groups,           
+    remove_teacher_from_group,    
     hash_password,
 )
 from app.routes.auth import require_admin
@@ -50,6 +50,24 @@ def add_teacher(
     return RedirectResponse("/teachers", status_code=303)
 
 
+@router.post("/teachers/{teacher_id}/assign-class")
+def assign_class(
+    teacher_id: int,
+    group_id: int = Form(...),   
+    user: dict = Depends(require_admin),
+):
+    assign_teacher_to_group(teacher_id, group_id)   # переименовано
+    return RedirectResponse(f"/teachers/{teacher_id}", status_code=303)
+
+@router.post("/teachers/{teacher_id}/remove-class")
+def remove_class(
+    teacher_id: int,
+    group_id: int = Form(...), 
+    user: dict = Depends(require_admin),
+):
+    remove_teacher_from_group(teacher_id, group_id)
+    return RedirectResponse(f"/teachers/{teacher_id}", status_code=303)
+
 @router.get("/teachers/{teacher_id}")
 def teacher_detail(
     request: Request,
@@ -59,32 +77,12 @@ def teacher_detail(
     teacher = get_teacher_by_id(teacher_id)
     if not teacher:
         return RedirectResponse("/teachers", status_code=303)
-    classes = get_teacher_classes(teacher_id)
+    groups = get_teacher_groups(teacher_id)   
     return templates.TemplateResponse(
         request,
         "teachers/detail.html",
-        {"teacher": teacher, "classes": classes, "user": user},
+        {"teacher": teacher, "groups": groups, "user": user},
     )
-
-
-@router.post("/teachers/{teacher_id}/assign-class")
-def assign_class(
-    teacher_id: int,
-    class_name: str = Form(...),
-    user: dict = Depends(require_admin),
-):
-    assign_teacher_to_class(teacher_id, class_name)
-    return RedirectResponse(f"/teachers/{teacher_id}", status_code=303)
-
-
-@router.post("/teachers/{teacher_id}/remove-class")
-def remove_class(
-    teacher_id: int,
-    class_name: str = Form(...),
-    user: dict = Depends(require_admin),
-):
-    remove_teacher_from_class(teacher_id, class_name)
-    return RedirectResponse(f"/teachers/{teacher_id}", status_code=303)
 
 
 @router.post("/teachers/delete")

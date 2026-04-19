@@ -1,22 +1,40 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 from fastapi.templating import Jinja2Templates
-from database.db import init_db, get_connection, hash_password, create_user
-from app.routes.auth import router as auth_router, get_current_user, _RedirectException
+
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from database.db import (
+    init_db,
+    get_all_items,
+    buy_item,
+    get_all_students,
+    get_connection,   
+    create_user,     
+    hash_password
+)
 from app.routes.students import router as students_router
+from app.routes.shop import router as shop_router
+from app.routes.auth import router as auth_router
 from app.routes.teachers import router as teachers_router
+from app.routes.auth import _RedirectException
+from app.routes.auth import get_current_user
 
-<<<<<<< HEAD
+SECRET_KEY = "TheSecretSecretSecretSecretKey00"
 
 
-app = FastAPI()
-=======
+
 # ── если у тебя есть shop router, подключи его аналогично ─────────────────────
 # from app.routes.shop import router as shop_router
->>>>>>> acc7bd5a1e07e081da96d2d1f510d6c040ece55f
 
 app = FastAPI(title="School Coins")
+
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
 templates = Jinja2Templates(directory="templates")
 
 
