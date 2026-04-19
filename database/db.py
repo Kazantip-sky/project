@@ -231,7 +231,7 @@ def get_all_students():
     return students
 
 
-def get_student_by_id(student_id: int) 
+def get_student_by_id(student_id: int): 
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM students WHERE id = ?', (student_id,))
@@ -324,7 +324,7 @@ def add_shop_item(
     quantity: int = -1,
     image_url: str = None,
     created_by: int = None,
-)   int:
+) -> int:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(

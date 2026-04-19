@@ -12,7 +12,7 @@ from database.db import (
     remove_teacher_from_class,
     hash_password,
 )
-from auth import require_admin
+from app.routes.auth import require_admin
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")

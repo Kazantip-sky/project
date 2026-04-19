@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Form, Request, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from starlette.middleware.sessions import SessionMiddleware
 
 from database.db import get_user_by_credentials, get_user_by_id
 

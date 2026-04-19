@@ -4,6 +4,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from database.db import init_db, get_all_items, buy_item, get_all_students
 from app.routes.students import router as students_router
 from app.routes.shop import router as shop_router
