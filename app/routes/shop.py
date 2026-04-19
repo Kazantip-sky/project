@@ -1,20 +1,16 @@
 from fastapi import APIRouter, Form, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse, JSONResponse
-from database.db import get_all_items, buy_item
- 
+from fastapi.responses import RedirectResponse
+
+from fastapi.responses import JSONResponse
+from database.db import buy_item, get_all_students
+
 router = APIRouter()
-templates = Jinja2Templates(directory='templates')
- 
- 
-@router.get('/shop')
-def shop_page(request: Request):
-    """Список активных товаров магазина."""
-    items = get_all_items()
-    return templates.TemplateResponse(
-        'shop/list.html',
-        {'request': request, 'items': items}
-    )
+templates = None  
+
+@router.get('/students')
+def students_page(request: Request):
+    students = get_all_students()
+    return templates.TemplateResponse(request, 'students/list.html', {'students': students})
  
  
 @router.post('/shop/buy')

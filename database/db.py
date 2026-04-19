@@ -155,6 +155,41 @@ def delete_student(student_id):
     cursor.execute('DELETE FROM students WHERE id = ?', (student_id,))
     conn.commit()
     conn.close()
+
+def get_student_by_id(student_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM students WHERE id = ?', (student_id,))
+    student = cursor.fetchone()
+    conn.close()
+    return student
+
+def get_student_transactions(student_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT amount, reason, created_at
+        FROM transactions
+        WHERE student_id = ?
+        ORDER BY created_at DESC
+    ''', (student_id,))
+    transactions = cursor.fetchall()
+    conn.close()
+    return transactions
+
+def get_student_purchases(student_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT si.name, si.image_url, p.price_paid, p.purchased_at
+        FROM purchases p
+        JOIN shop_items si ON p.item_id = si.id
+        WHERE p.student_id = ?
+        ORDER BY p.purchased_at DESC
+    ''', (student_id,))
+    purchases = cursor.fetchall()
+    conn.close()
+    return purchases
  
 def delete_teacher(teacher_id):
     conn = get_connection()
@@ -203,8 +238,43 @@ def get_all_items():
     items = cursor.fetchall()
     conn.close()
     return items
- 
- 
+
+def search_items(search_term: str):
+    """Поиск товаров по названию или описанию (без учёта регистра, частичное совпадение)."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT
+            si.id,
+            si.name,
+            si.description,
+            si.price,
+            si.quantity,
+            si.image_url,
+            sc.name AS category_name
+        FROM shop_items si
+        LEFT JOIN shop_categories sc ON si.category_id = sc.id
+        WHERE si.is_active = 1
+          AND (si.name LIKE ? OR si.description LIKE ?)
+        ORDER BY sc.sort_order, si.name
+    ''', (f'%{search_term}%', f'%{search_term}%'))
+    items = cursor.fetchall()
+    conn.close()
+    return items
+
+def search_items_by_category(category_name: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT si.*, sc.name as category_name
+        FROM shop_items si
+        JOIN shop_categories sc ON si.category_id = sc.id
+        WHERE sc.name = ? AND si.is_active = 1
+    ''', (category_name,))
+    items = cursor.fetchall()
+    conn.close()
+    return items
+
 def buy_item(student_id: int, item_id: int) -> dict:
     conn = get_connection()
     cursor = conn.cursor()

@@ -1,5 +1,16 @@
-<form action="/students/add" method="post">
+{% extends 'base.html' %}
+
+{% block title %}Добавить студента{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Добавить студента</h1>
+</section>
+
+<form action="/student/add" method="post">
     <input type="text" name="name" placeholder="Имя студента" required>
-    <input type="text" name="class" placeholder="Класс" required>
+    <input type="text" name="class_name" placeholder="Класс" required>
     <button type="submit">Добавить</button>
+    <a href="/students">Отмена</a>
 </form>
+{% endblock %}
