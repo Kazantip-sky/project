@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, Cookie, Depends, Form, Request
+from fastapi import Cookie
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
@@ -72,7 +73,6 @@ def decode_session_token(token: str) -> Optional[int]:
 # ─── зависимости (Depends) ────────────────────────────────────────────────────
 
 def get_current_user(session_token: str = Cookie(default=None)) -> Optional[dict]:
-    """Возвращает словарь с данными пользователя или None."""
     if not session_token:
         return None
     user_id = decode_session_token(session_token)
@@ -134,6 +134,7 @@ def login_submit(
     password: str = Form(...),
 ):
     ip = request.client.host if request.client else "unknown"
+    user = get_current_user(request.cookies.get(SESSION_COOKIE))
     user = get_user_by_credentials(username, password)
 
     if not user:

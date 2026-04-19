@@ -50,7 +50,8 @@ def index(request: Request):
     user = get_current_user(request.cookies.get("session_token"))
     if not user:
         return RedirectResponse("/login", status_code=302)
-    return templates.TemplateResponse(request, "index.html", {"user": user})
+    return templates.TemplateResponse("shop/index.html", {"request": request, "user": user})
+
 
 
 # ─── инициализация БД при старте ──────────────────────────────────────────────
@@ -66,11 +67,11 @@ def _ensure_login_log_table():
     conn = get_connection()
     conn.execute("""
         CREATE TABLE IF NOT EXISTS login_log (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            username   TEXT    NOT NULL,
-            success    INTEGER NOT NULL DEFAULT 0,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            success INTEGER NOT NULL DEFAULT 0,
             ip_address TEXT,
-            user_id    INTEGER,
+            user_id INTEGER,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
