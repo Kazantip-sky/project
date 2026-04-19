@@ -2,18 +2,26 @@ from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
+from starlette.middleware.sessions import SessionMiddleware
 
 from database.db import init_db, get_all_items, buy_item, get_all_students
 from app.routes.students import router as students_router
 from app.routes.shop import router as shop_router
+from app.routes.auth import router as auth_router
+from app.routes.teachers import router as teachers_router
+
+SECRET_KEY = "TheSecretSecretSecretSecretKey00"
 
 app = FastAPI()
 
-# Только одно объявление!
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+app.include_router(auth_router)
 app.include_router(students_router)
+app.include_router(teachers_router)
 app.include_router(shop_router)
 
 @app.on_event("startup")
