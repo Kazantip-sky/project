@@ -1,7 +1,7 @@
 <div class="student-card">
     <h2>{{ student.name }}</h2>
     <span class="coins">{{ student.coins }} монет</span>
-    <span class="class">{{ student.class }}</span>
+    <span class="class">{{ student.id_group }}</span>
     <a href="/students/{{ student.id }}">Подробнее</a>
 
     <form action="/student/delete" method="post"
