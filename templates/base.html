@@ -1,18 +1,48 @@
 <!DOCTYPE html>
-<html lang ='ru'>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Проект{% endblock %}</title>
-    <link rel = 'stylesheet' href = '/static/css/style.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}School Coins{% endblock %}</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
     <script src="/static/js/main.js"></script>
-    </head>
-    <body>
-        <nav>
-            <a href="/students">Студенты</a>
-            <a href="/shop">Магазин</a>
-        </nav>
-        <main>
-            {% block content %}{% endblock %}
-        </main>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a href="/" class="nav-brand">
+        <span>🪙 SchoolCoins</span>
+    </a>
+
+    {% if user %}
+    <div class="nav-links">
+        <a href="/students">Студенты</a>
+        <a href="/shop">Магазин</a>
+
+        {% if user.role in ('admin', 'teacher') %}
+            <a href="/teachers">Учителя</a>
+        {% endif %}
+
+        {% if user.role == 'admin' %}
+            <a href="/admin">Админ</a>
+        {% endif %}
+    </div>
+
+    <div class="nav-right">
+        <span>{{ user.full_name }} ({{ user.role }})</span>
+        <a href="/logout" class="btn-logout">Выйти</a>
+    </div>
+    {% endif %}
+</nav>
+
+<main class="main-content">
+    {% block content %}{% endblock %}
+</main>
+
 </body>
 </html>
