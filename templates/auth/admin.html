@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Администрирование{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Панель администратора</h1>
+  <a href="/admin/users/add" class="btn-primary">+ Добавить пользователя</a>
+</div>
+
+<div class="admin-actions">
+  <a href="/admin/login-log" class="action-card">📋 История входов</a>
+  <a href="/teachers" class="action-card">👩‍🏫 Учителя</a>
+  <a href="/students" class="action-card">🎓 Ученики</a>
+</div>
+
+<h2>Пользователи</h2>
+
+<table class="data-table">
+{% for u in users %}
+<tr>
+  <td>{{ u.id }}</td>
+  <td>{{ u.username }}</td>
+  <td>{{ u.full_name }}</td>
+  <td>{{ u.role }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

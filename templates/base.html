@@ -1,18 +1,183 @@
 <!DOCTYPE html>
-<html lang ='ru'>
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Проект{% endblock %}</title>
-    <link rel = 'stylesheet' href = '/static/css/style.css'>
-    <script src="/static/js/main.js"></script>
-    </head>
-    <body>
-        <nav>
-            <a href="/students">Студенты</a>
-            <a href="/shop">Магазин</a>
-        </nav>
-        <main>
-            {% block content %}{% endblock %}
-        </main>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}School Coins{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Mulish:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="/static/js/main.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d0f14;
+      --surface: #161a23;
+      --border:  #252b38;
+      --accent:  #f0c040;
+      --accent2: #e07b30;
+      --text:    #e8eaf0;
+      --muted:   #6b7280;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Mulish', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── навбар ──────────────────────────────── */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .8rem 1.5rem;
+      background: rgba(13,15,20,.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .nav-brand-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .nav-brand-name {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: .875rem;
+      font-weight: 600;
+      padding: .4rem .8rem;
+      border-radius: 7px;
+      transition: color .2s, background .2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+    }
+
+    .nav-links a.active {
+      color: var(--accent);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .85rem;
+    }
+
+    .nav-user-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .nav-user-role {
+      font-size: .72rem;
+      color: var(--muted);
+      background: rgba(255,255,255,.06);
+      padding: .15em .55em;
+      border-radius: 20px;
+    }
+
+    .btn-logout {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      padding: .35rem .8rem;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      transition: color .2s, border-color .2s;
+    }
+
+    .btn-logout:hover { color: #fca5a5; border-color: rgba(239,68,68,.4); }
+
+    /* ── основной контент ────────────────────── */
+    .main-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── утилиты ─────────────────────────────── */
+    .badge {
+      padding: .2em .65em;
+      border-radius: 20px;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <div class="nav-brand-icon">🪙</div>
+    <span class="nav-brand-name">SchoolCoins</span>
+  </a>
+
+  {% if user %}
+  <ul class="nav-links">
+    <li><a href="/students">Ученики</a></li>
+    <li><a href="/shop">Магазин</a></li>
+    {% if user.role in ('admin', 'teacher') %}
+    <li><a href="/teachers">Учителя</a></li>
+    {% endif %}
+    {% if user.role == 'admin' %}
+    <li><a href="/admin" style="color:var(--accent)">Админ</a></li>
+    {% endif %}
+  </ul>
+
+  <div class="nav-right">
+    <div class="nav-user">
+      <span class="nav-user-name">{{ user.full_name }}</span>
+      <span class="nav-user-role">{{ user.role }}</span>
+    </div>
+    <a href="/logout" class="btn-logout">Выйти</a>
+  </div>
+  {% endif %}
+</nav>
+
+<main class="main-content">
+  {% block content %}{% endblock %}
+</main>
+
 </body>
 </html>

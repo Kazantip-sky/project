@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Доступ запрещён{% endblock %}
+
+{% block content %}
+<div style="text-align:center;padding:4rem 1rem">
+  <div style="font-size:4rem;margin-bottom:1rem">🔒</div>
+  <h1 style="font-size:2rem;font-weight:700;margin-bottom:.5rem">403 — Доступ запрещён</h1>
+  <p style="color:var(--muted,#6b7280);margin-bottom:2rem">
+    У вас нет прав для просмотра этой страницы.
+  </p>
+  <a href="/" style="background:var(--accent,#f0c040);color:#111;padding:.65rem 1.4rem;border-radius:8px;text-decoration:none;font-weight:600">
+    На главную
+  </a>
+</div>
+{% endblock %}

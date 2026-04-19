@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}История входов{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="/admin" class="back-link">← Панель администратора</a>
+    <h1>История входов</h1>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Время</th>
+        <th>Логин</th>
+        <th>Пользователь</th>
+        <th>IP-адрес</th>
+        <th>Результат</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr class="{{ 'row-fail' if not log.success else '' }}">
+        <td>{{ log.id }}</td>
+        <td class="mono">{{ log.created_at[:16] if log.created_at else '—' }}</td>
+        <td><code>{{ log.username }}</code></td>
+        <td>{{ log.full_name or '—' }}</td>
+        <td class="mono">{{ log.ip_address or '—' }}</td>
+        <td>
+          {% if log.success %}
+            <span class="badge badge-ok">✓ Успех</span>
+          {% else %}
+            <span class="badge badge-fail">✗ Ошибка</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="empty">Записей нет</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
