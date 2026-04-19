@@ -7,7 +7,7 @@ from database.db import init_db, get_all_items, buy_item, get_all_students
 from app.routes.students import router as students_router
 from app.routes.shop import router as shop_router
 
-print(1)
+
 
 app = FastAPI()
 
