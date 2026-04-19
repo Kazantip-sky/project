@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}История входов{% endblock %}
+
+{% block content %}
+<h1>История входов</h1>
+
+<table class="data-table">
+{% for log in logs %}
+<tr>
+  <td>{{ log.id }}</td>
+  <td>{{ log.username }}</td>
+  <td>{{ log.ip_address }}</td>
+  <td>{{ log.success }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

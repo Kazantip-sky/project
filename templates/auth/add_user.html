@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Добавить пользователя{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <a href="/admin" class="back-link">← Панель администратора</a>
+  <h1 class="page-title">Новый пользователь</h1>
+
+  {% if error %}
+  <div class="error-box">⚠ {{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="/admin/users/add" class="form-card">
+    <div class="field">
+      <label>Логин *</label>
+      <input name="username" required>
+    </div>
+
+    <div class="field">
+      <label>Пароль *</label>
+      <input name="password" type="password" required>
+    </div>
+
+    <div class="field">
+      <label>Полное имя *</label>
+      <input name="full_name" required>
+    </div>
+
+    <div class="field">
+      <label>Роль *</label>
+      <select name="role">
+        <option value="teacher">Учитель</option>
+        <option value="admin">Администратор</option>
+      </select>
+    </div>
+
+    <button class="btn-submit">Создать</button>
+  </form>
+</div>
+{% endblock %}
