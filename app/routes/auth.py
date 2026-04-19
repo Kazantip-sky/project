@@ -1,3 +1,6 @@
+from fastapi import APIRouter, Cookie, Depends, Form, Request, HTTPException
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, Cookie, Depends, Form, Request
@@ -5,7 +8,7 @@ from fastapi import Cookie
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
-
+from starlette.status import HTTP_303_SEE_OTHER
 from database.db import (
     get_connection,
     get_user_by_credentials,
