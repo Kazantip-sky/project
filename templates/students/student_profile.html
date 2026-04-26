@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Мой профиль{% endblock %}
+
+{% block content %}
+
+<!-- Шапка с балансом -->
+<section class="shop-hero">
+    <div>
+        <h1 class="shop-hero__title">👋 Привет, {{ student.name }}!</h1>
+        <p class="shop-hero__subtitle">Твой личный кабинет</p>
+    </div>
+    
+    <div class="balance-card">
+        <div class="balance-card__icon">🪙</div>
+        <div>
+            <div class="balance-card__label">Баланс</div>
+            <div class="balance-card__amount">{{ student.coins }}</div>
+            <div class="balance-card__name">школьных монет</div>
+        </div>
+    </div>
+</section>
+
+<!-- Основная информация -->
+<section class="form-card" style="margin-bottom: 2rem;">
+    <h2 class="page-title" style="margin-bottom: 1.5rem;">📋 Информация</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <div class="field">
+            <div style="font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .4rem;">Группа</div>
+            <div style="font-size: 1.1rem; font-weight: 600;">{{ student.id_group or 'Не указана' }}</div>
+        </div>
+        
+        <div class="field">
+            <div style="font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .4rem;">ID студента</div>
+            <div style="font-size: 1.1rem; font-weight: 600; font-family: monospace;">#{{ student.id }}</div>
+        </div>
+        
+        {% if student.login %}
+        <div class="field">
+            <div style="font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .4rem;">Логин</div>
+            <div style="font-size: 1.1rem; font-weight: 600; font-family: monospace;">{{ student.login }}</div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Покупки -->
+<section class="form-card" style="margin-bottom: 2rem;">
+    <h2 class="page-title" style="margin-bottom: 1.5rem;">🛒 Мои покупки</h2>
+    
+    {% if purchases %}
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Стоимость</th>
+                    <th>Дата покупки</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in purchases %}
+                <tr>
+                    <td style="font-weight: 600;">{{ p.name }}</td>
+                    <td style="color: var(--accent); font-weight: 700;">🪙 {{ p.price_paid }}</td>
+                    <td class="mono" style="color: var(--muted);">{{ p.purchased_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty">
+        <div style="font-size: 3rem; margin-bottom: .5rem;">🛍️</div>
+        <p>Пока нет покупок</p>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Транзакции -->
+<section class="form-card">
+    <h2 class="page-title" style="margin-bottom: 1.5rem;">📊 История операций</h2>
+    
+    {% if transactions %}
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Описание</th>
+                    <th>Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr class="{% if t.amount > 0 %}row-success{% else %}row-fail{% endif %}">
+                    <td class="mono" style="color: var(--muted);">{{ t.created_at }}</td>
+                    <td>{{ t.reason or '—' }}</td>
+                    <td style="font-weight: 700; color: {{ '#4ade80' if t.amount > 0 else '#f87171' }}">
+                        {% if t.amount > 0 %}+{% endif %}{{ t.amount }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty">
+        <div style="font-size: 3rem; margin-bottom: .5rem;">📭</div>
+        <p>Пока нет транзакций</p>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}

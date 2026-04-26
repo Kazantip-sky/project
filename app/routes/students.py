@@ -38,6 +38,25 @@ def student_detail(request: Request, student_id: int, user: dict = Depends(requi
          'purchases': purchases, 'user': user}
     )
 
+@router.get('/student-profile')
+def student_profile(request: Request, user: dict = Depends(require_user)):
+    student = get_student_by_id(user['id'])
+    if not student:
+        return RedirectResponse('/students', status_code=303)
+    
+    transactions = get_student_transactions(user['id'])
+    purchases = get_student_purchases(user['id'])
+    
+    return templates.TemplateResponse(
+        request,
+        'students/student_profile.html',
+        {
+            'student': student,
+            'transactions': transactions,
+            'purchases': purchases,
+            'user': user
+        }
+    )
 
 @router.post('/student/add')
 def add_student(
