@@ -45,6 +45,10 @@ def _ensure_login_log_table():
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     """)
+    try:
+        conn.execute("ALTER TABLE login_log ADD COLUMN role TEXT")
+    except Exception:
+        pass
     conn.commit()
     conn.close()
 
@@ -177,7 +181,7 @@ def login_student(
 
     conn = get_connection()
     row = conn.execute(
-        "SELECT id, name, username, password FROM students WHERE username = ?", 
+        "SELECT id, name, login, password FROM students WHERE login = ?", 
         (username,)
     ).fetchone()
     conn.close()
@@ -191,8 +195,7 @@ def login_student(
         )
 
     log_login_attempt(username, success=True, ip=ip, user_id=row["id"], role="student")
-    return _make_session_response(row["id"], "student", "/shop")
-
+    return _make_session_response(row["id"], "student", "/")
 # ─── POST /login/teacher ──────────────────────────────────────────────────────
 
 @router.post("/login/teacher")
