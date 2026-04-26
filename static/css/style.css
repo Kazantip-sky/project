@@ -567,3 +567,12 @@ body {
 .badge-role-admin   { background: rgba(239,68,68,.15);  color: #fca5a5; }
 .badge-role-teacher { background: rgba(240,192,64,.15); color: #f0c040; }
 .badge-role-student { background: rgba(74,222,128,.15); color: #4ade80; }
+
+.amount-plus { 
+    color: #4ade80; 
+    font-weight: 700; 
+}
+.amount-minus { 
+    color: #f87171; 
+    font-weight: 700; 
+}
