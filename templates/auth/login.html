@@ -1,46 +1,101 @@
-{% extends "base.html" %}
-{% block title %}История входов{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — SchoolCoins</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Mulish:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+</head>
+<body class="login-body">
+<div class="login-bg-glow"></div>
 
-{% block content %}
-<div class="page-header">
-  <div>
-    <a href="/admin" class="back-link">← Панель администратора</a>
-    <h1>История входов</h1>
-  </div>
+<div class="login-card">
+    <div class="login-logo">
+        <div class="login-logo-icon">🪙</div>
+        <span class="login-logo-name">SchoolCoins</span>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="login-tabs">
+        <button class="login-tab-btn {% if active_tab != 'teacher' and active_tab != 'admin' %}active{% endif %}"
+                onclick="loginSwitchTab('student', this)">🎓 Ученик</button>
+        <button class="login-tab-btn {% if active_tab == 'teacher' or active_tab == 'admin' %}active{% endif %}"
+                onclick="loginSwitchTab('teacher', this)">👩‍🏫 Учитель</button>
+    </div>
+
+    <!-- ── Панель: Ученик ── -->
+    <div class="login-panel {% if active_tab != 'teacher' and active_tab != 'admin' %}active{% endif %}" id="login-panel-student">
+        <div class="login-panel-title">Вход для ученика</div>
+
+        {% if error and active_tab != 'teacher' and active_tab != 'admin' %}
+        <div class="login-error">⚠ {{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/login/student">
+            <div class="login-field">
+                <label>Логин</label>
+                <input type="text" name="username" placeholder="student_login" required autocomplete="username">
+            </div>
+            <div class="login-field">
+                <label>Пароль</label>
+                <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn">Войти как ученик</button>
+        </form>
+    </div>
+
+    <!-- ── Панель: Учитель ── -->
+    <div class="login-panel {% if active_tab == 'teacher' or active_tab == 'admin' %}active{% endif %}" id="login-panel-teacher">
+        <div class="login-panel-title">Вход для учителя</div>
+
+        {% if error and active_tab == 'teacher' %}
+        <div class="login-error">⚠ {{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/login/teacher">
+            <div class="login-field">
+                <label>Логин</label>
+                <input type="text" name="username" placeholder="teacher_login" required autocomplete="username">
+            </div>
+            <div class="login-field">
+                <label>Пароль</label>
+                <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn">Войти как учитель</button>
+        </form>
+
+        <div class="login-divider">или</div>
+
+        <button class="login-btn-admin" id="login-admin-toggle" onclick="loginToggleAdmin()">
+            🔐 <span id="login-admin-toggle-text">Войти от имени администратора</span>
+        </button>
+
+        <div class="login-admin-form {% if active_tab == 'admin' %}open{% endif %}" id="login-admin-form">
+            <div class="login-panel-title login-panel-title--admin">🛡 Администратор</div>
+
+            {% if error and active_tab == 'admin' %}
+            <div class="login-error">⚠ {{ error }}</div>
+            {% endif %}
+
+            <form method="post" action="/login/admin">
+                <div class="login-field">
+                    <label>Логин администратора</label>
+                    <input type="text" name="username" placeholder="admin" required autocomplete="off">
+                </div>
+                <div class="login-field">
+                    <label>Пароль</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="login-btn login-btn--danger">Войти как администратор</button>
+            </form>
+        </div>
+    </div>
 </div>
 
-<div class="table-wrap">
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Время</th>
-        <th>Логин</th>
-        <th>Пользователь</th>
-        <th>IP-адрес</th>
-        <th>Результат</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for log in logs %}
-      <tr class="{{ 'row-fail' if not log.success else '' }}">
-        <td>{{ log.id }}</td>
-        <td class="mono">{{ log.created_at[:16] if log.created_at else '—' }}</td>
-        <td><code>{{ log.username }}</code></td>
-        <td>{{ log.full_name or '—' }}</td>
-        <td class="mono">{{ log.ip_address or '—' }}</td>
-        <td>
-          {% if log.success %}
-            <span class="badge badge-ok">✓ Успех</span>
-          {% else %}
-            <span class="badge badge-fail">✗ Ошибка</span>
-          {% endif %}
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="6" class="empty">Записей нет</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-{% endblock %}
+<script src="/static/js/main.js"></script>
+<script src="/static/js/login.js"></script>
+</body>
+</html>

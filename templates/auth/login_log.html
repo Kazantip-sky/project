@@ -2,16 +2,57 @@
 {% block title %}История входов{% endblock %}
 
 {% block content %}
-<h1>История входов</h1>
+<div class="page-header">
+  <div>
+    <a href="/admin" class="back-link">← Панель администратора</a>
+    <h1>История входов</h1>
+  </div>
+</div>
 
-<table class="data-table">
-{% for log in logs %}
-<tr>
-  <td>{{ log.id }}</td>
-  <td>{{ log.username }}</td>
-  <td>{{ log.ip_address }}</td>
-  <td>{{ log.success }}</td>
-</tr>
-{% endfor %}
-</table>
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Время</th>
+        <th>Логин</th>
+        <th>Пользователь</th>
+        <th>Роль</th>
+        <th>IP-адрес</th>
+        <th>Результат</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr class="{{ 'row-fail' if not log.success else '' }}">
+        <td>{{ log.id }}</td>
+        <td class="mono">{{ log.created_at[:16] if log.created_at else '—' }}</td>
+        <td><code>{{ log.username }}</code></td>
+        <td>{{ log.full_name or '—' }}</td>
+        <td>
+          {% if log.role == 'admin' %}
+            <span class="badge badge-role-admin">admin</span>
+          {% elif log.role == 'teacher' %}
+            <span class="badge badge-role-teacher">teacher</span>
+          {% elif log.role == 'student' %}
+            <span class="badge badge-role-student">student</span>
+          {% else %}
+            <span style="color:var(--muted);">—</span>
+          {% endif %}
+        </td>
+        <td class="mono">{{ log.ip_address or '—' }}</td>
+        <td>
+          {% if log.success %}
+            <span class="badge badge-ok">✓ Успех</span>
+          {% else %}
+            <span class="badge badge-fail">✗ Ошибка</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="empty">Записей нет</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

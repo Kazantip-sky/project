@@ -4,9 +4,31 @@
 
 {% block content %}
 
-<section class="page-header">
-    <h1>{{ student.name }}</h1>
-    <a href="/students" class="btn">← Назад</a>
+<section class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;">
+    <div>
+        <a href="/students" style="font-size:.85rem;color:var(--muted,#6b7280);text-decoration:none;">← Все студенты</a>
+        <h1 style="font-size:1.6rem;font-weight:700;margin-top:.25rem;">{{ student.name }}</h1>
+    </div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+        {% if user and user.role == 'admin' %}
+        <a href="/admin/students/{{ student.id }}/set-credentials"
+           style="
+               display:inline-flex;align-items:center;gap:.4rem;
+               padding:.5rem 1rem;
+               background:rgba(240,192,64,.12);
+               border:1.5px solid rgba(240,192,64,.3);
+               border-radius:8px;
+               color:#f0c040;
+               text-decoration:none;
+               font-size:.875rem;
+               font-weight:700;
+               transition:all .2s;
+           "
+           onmouseover="this.style.background='rgba(240,192,64,.2)'"
+           onmouseout="this.style.background='rgba(240,192,64,.12)'"
+        >🔑 Логин/пароль</a>
+        {% endif %}
+    </div>
 </section>
 
 <!-- Основная информация -->
@@ -24,6 +46,18 @@
             <span class="detail-label">ID</span>
             <span class="detail-value">#{{ student.id }}</span>
         </div>
+        {% if user and user.role == 'admin' %}
+        <div class="detail-row">
+            <span class="detail-label">Логин</span>
+            <span class="detail-value">
+                {% if student.login %}
+                    <code style="background:rgba(255,255,255,.06);padding:.15em .5em;border-radius:4px;font-size:.9rem;">{{ student.login }}</code>
+                {% else %}
+                    <span style="color:#f87171;font-size:.875rem;">⚠ не задан</span>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -85,65 +119,59 @@
 
 <style>
 .student-detail-card {
-    background: var(--card-bg, #fff);
+    background: #161a23;
+    border: 1px solid #252b38;
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 32px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
-
 .detail-row {
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #252b38;
 }
-
 .detail-row:last-child { border-bottom: none; }
-
 .detail-label {
     font-weight: 600;
-    color: #888;
+    color: #6b7280;
     min-width: 100px;
+    font-size: .875rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
 }
-
-.detail-value { font-size: 1.1rem; }
-.detail-value.coins { font-weight: 700; color: #f59e0b; font-size: 1.2rem; }
-
+.detail-value { font-size: 1rem; }
+.detail-value.coins { font-weight: 700; color: #f59e0b; font-size: 1.1rem; }
 .detail-section { margin-bottom: 32px; }
-.detail-section h2 { margin-bottom: 12px; }
-
+.detail-section h2 { margin-bottom: 12px; font-size: 1.15rem; font-weight: 700; }
 .detail-table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--card-bg, #fff);
+    background: #161a23;
+    border: 1px solid #252b38;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
 .detail-table th {
     text-align: left;
-    padding: 12px 16px;
-    background: #f8f8f8;
-    color: #555;
+    padding: 10px 16px;
+    background: #0d0f14;
+    color: #6b7280;
     font-weight: 600;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    border-bottom: 1px solid #252b38;
 }
-
 .detail-table td {
-    padding: 12px 16px;
-    border-top: 1px solid #f0f0f0;
+    padding: 10px 16px;
+    border-top: 1px solid #252b38;
+    font-size: .9rem;
 }
-
-.amount-plus { color: #16a34a; font-weight: 700; }
-.amount-minus { color: #dc2626; font-weight: 700; }
-
-.detail-empty {
-    color: #aaa;
-    font-style: italic;
-    padding: 16px 0;
-}
+.amount-plus { color: #4ade80; font-weight: 700; }
+.amount-minus { color: #f87171; font-weight: 700; }
+.detail-empty { color: #6b7280; font-style: italic; padding: 16px 0; }
 </style>
 
 {% endblock %}
