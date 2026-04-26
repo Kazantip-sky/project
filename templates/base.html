@@ -24,6 +24,10 @@
         <a href="/students">Студенты</a>
         <a href="/shop">Магазин</a>
 
+        {% if user.role == 'student' %}
+            <a href="/profile/purchases">📜 Мои покупки</a>
+        {% endif %}
+
         {% if user.role in ('admin', 'teacher') %}
             <a href="/teachers">Учителя</a>
         {% endif %}
@@ -43,12 +47,6 @@
 <main class="main-content">
     {% block content %}{% endblock %}
 </main>
-
-{% if user.role == 'student' %}
-    <a href="/profile/purchases">Мои покупки</a>
-{% endif %}
-
-<td><a href="/students/{{ student.id }}/purchases">📜 Покупки</a></td>
 
 </body>
 </html>

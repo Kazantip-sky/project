@@ -89,13 +89,15 @@ def init_db():
     ''')
 
     for sql in [
+        'ALTER TABLE students ADD COLUMN login TEXT',
+        'ALTER TABLE students ADD COLUMN password TEXT',
         'ALTER TABLE students ADD COLUMN created_by INTEGER',
         'ALTER TABLE transactions ADD COLUMN created_by INTEGER',
     ]:
         try:
             cursor.execute(sql)
         except Exception:
-            pass
+            pass  
 
     conn.commit()
     conn.close()
