@@ -1,16 +1,3 @@
-/* ── Фильтрация товаров по категориям ── */
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const cat = btn.dataset.category;
-        document.querySelectorAll('.item-card').forEach(card => {
-            const cardCat = card.dataset.categoryId || 'all';
-            card.style.display = (cat === 'all' || cardCat === cat) ? '' : 'none';
-        });
-    });
-});
 /* ═══════════════════════════════════════════════════════════════
    LOGIN PAGE  —  static/js/login.js
    Подключается только на странице /login
@@ -54,13 +41,4 @@ function loginToggleAdmin() {
             ? 'Скрыть форму администратора'
             : 'Войти от имени администратора';
     }
-}
-function showTeacher() {
-    document.getElementById("student-form").classList.add("hidden");
-    document.getElementById("teacher-form").classList.remove("hidden");
-}
-
-function showStudent() {
-    document.getElementById("teacher-form").classList.add("hidden");
-    document.getElementById("student-form").classList.remove("hidden");
 }
