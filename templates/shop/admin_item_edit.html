@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактировать товар{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Редактирование: {{ item.name }}</h1>
+    <form method="post" action="/admin/items/edit/{{ item.id }}" class="form-card">
+        <div class="field"><label>Название</label><input name="name" value="{{ item.name }}" required></div>
+        <div class="field"><label>Цена (монет)</label><input name="price" type="number" value="{{ item.price }}" required></div>
+        <div class="field"><label>Описание</label><textarea name="description">{{ item.description or '' }}</textarea></div>
+        <div class="field">
+            <label>Категория</label>
+            <select name="category_id">
+                <option value="">— Без категории —</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if cat.id == item.category_id %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field"><label>Количество (-1 = бесконечно)</label><input name="quantity" type="number" value="{{ item.quantity }}"></div>
+        <div class="field"><label>URL изображения</label><input name="image_url" value="{{ item.image_url or '' }}"></div>
+        <div class="field"><label><input type="checkbox" name="is_active" value="1" {% if item.is_active %}checked{% endif %}> Товар активен</label></div>
+        <button type="submit" class="btn-submit">💾 Сохранить</button>
+        <a href="/admin/items" class="btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

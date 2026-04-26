@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Управление категориями{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Категории товаров</h1>
+
+    <form method="post" action="/admin/categories/add" class="form-card">
+        <div class="field">
+            <label>Название</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="field">
+            <label>Описание</label>
+            <textarea name="description"></textarea>
+        </div>
+        <div class="field">
+            <label>Порядок сортировки</label>
+            <input type="number" name="sort_order" value="0">
+        </div>
+        <button type="submit" class="btn-submit">➕ Добавить категорию</button>
+    </form>
+
+    <table class="data-table">
+        <thead>
+            <tr><th>ID</th><th>Название</th><th>Описание</th><th>Порядок</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for cat in categories %}
+            <tr>
+                <td>{{ cat.id }}</td>
+                <td>{{ cat.name }}</td>
+                <td>{{ cat.description or '' }}</td>
+                <td>{{ cat.sort_order }}</td>
+                <td>
+                    <form method="post" action="/admin/categories/delete/{{ cat.id }}"
+                          onsubmit="return confirm('Удалить категорию? Товары останутся без категории.')">
+                        <button type="submit" class="btn-danger">🗑</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

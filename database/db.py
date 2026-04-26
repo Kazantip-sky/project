@@ -348,6 +348,39 @@ def get_all_items():
     conn.close()
     return items
 
+def get_all_categories():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM shop_categories ORDER BY sort_order")
+    cats = cursor.fetchall()
+    conn.close()
+    return cats
+
+def update_shop_item(item_id, name, price, description, category_id, quantity, image_url, is_active):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE shop_items
+        SET name=?, price=?, description=?, category_id=?, quantity=?, image_url=?, is_active=?
+        WHERE id=?
+    """, (name, price, description, category_id, quantity, image_url, is_active, item_id))
+    conn.commit()
+    conn.close()
+
+def delete_shop_item(item_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM shop_items WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+
+def get_shop_item_by_id(item_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM shop_items WHERE id=?", (item_id,))
+    item = cursor.fetchone()
+    conn.close()
+    return item
 
 def search_items(search_term: str):
     conn = get_connection()
@@ -370,7 +403,6 @@ def search_items(search_term: str):
     items = cursor.fetchall()
     conn.close()
     return items
-
 
 def search_items_by_category(category_name: str):
     conn = get_connection()
@@ -443,3 +475,17 @@ def buy_item(student_id: int, item_id: int) -> dict:
         return {'ok': False, 'error': str(e)}
     finally:
         conn.close()
+
+# Для админа – показать все товары (включая неактивные)
+def get_all_items_admin():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT si.*, sc.name as category_name
+        FROM shop_items si
+        LEFT JOIN shop_categories sc ON si.category_id = sc.id
+        ORDER BY si.is_active DESC, sc.sort_order, si.name
+    """)
+    items = cursor.fetchall()
+    conn.close()
+    return items

@@ -44,5 +44,11 @@
     {% block content %}{% endblock %}
 </main>
 
+{% if user.role == 'student' %}
+    <a href="/profile/purchases">Мои покупки</a>
+{% endif %}
+
+<td><a href="/students/{{ student.id }}/purchases">📜 Покупки</a></td>
+
 </body>
 </html>

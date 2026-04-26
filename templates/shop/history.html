@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}История покупок{% endblock %}
+
+{% block content %}
+<div>
+    <h1>История покупок</h1>
+    {% if student %}
+        <p>Студент: <strong>{{ student.name }}</strong> | Баланс: 🪙 {{ student.coins }}</p>
+    {% endif %}
+
+    {% if back_url %}
+        <a href="{{ back_url }}" class="back-link">← Назад к списку студентов</a>
+    {% endif %}
+
+    {% if purchases %}
+        <table class="data-table">
+            <thead>
+                <tr><th>Товар</th><th>Цена (монет)</th><th>Дата покупки</th><th>Изображение</th></tr>
+            </thead>
+            <tbody>
+                {% for p in purchases %}
+                <tr>
+                    <td>{{ p.name }}</td>
+                    <td>{{ p.price_paid }}</td>
+                    <td>{{ p.purchased_at }}</td>
+                    <td>{% if p.image_url %}<img src="{{ p.image_url }}" width="40">{% else %}🎁{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Покупок пока нет.</p>
+    {% endif %}
+</div>
+{% endblock %}

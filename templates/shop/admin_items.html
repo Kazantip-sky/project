@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Управление товарами{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Товары магазина</h1>
+    <a href="/admin/items/add" class="btn-primary">➕ Добавить товар</a>
+
+    <table class="data-table">
+        <thead>
+            <tr><th>ID</th><th>Название</th><th>Цена</th><th>Категория</th><th>Остаток</th><th>Активен</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.category_name or '—' }}</td>
+                <td>{{ item.quantity if item.quantity != -1 else '∞' }}</td>
+                <td>{{ '✅' if item.is_active else '❌' }}</td>
+                <td>
+                    <a href="/admin/items/edit/{{ item.id }}" class="btn-sm">✏️</a>
+                    <form method="post" action="/admin/items/delete/{{ item.id }}" style="display:inline"
+                          onsubmit="return confirm('Удалить товар навсегда?')">
+                        <button type="submit" class="btn-sm btn-danger">🗑</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

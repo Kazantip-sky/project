@@ -40,6 +40,7 @@
                     type="submit"
                     class="btn-buy {% if student.coins < item.price %}btn-buy--disabled{% endif %}"
                     {% if student.coins < item.price %}disabled title="Недостаточно монет"{% endif %}
+                    data-price="{{ item.price }}"
                 >
                     {% if student.coins < item.price %}Не хватает{% else %}Купить{% endif %}
                 </button>
