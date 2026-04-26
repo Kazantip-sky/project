@@ -26,8 +26,11 @@ from app.routes.auth import get_current_user
 
 SECRET_KEY = "TheSecretSecretSecretSecretKey00"
 
+
+
 # ── если у тебя есть shop router, подключи его аналогично ─────────────────────
 # from app.routes.shop import router as shop_router
+
 app = FastAPI(title="School Coins")
 
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)

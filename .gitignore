@@ -218,4 +218,5 @@ __marimo__/
 
 .vscode/
 database.db
-*.db
+*.dbproject/
+project/
