@@ -14,7 +14,7 @@
 
 <div class="login-card">
     <div class="login-logo">
-        <div class="login-logo-icon">🪙</div>
+        <div class="login-logo-icon">🎖</div>
         <span class="login-logo-name">SchoolCoins</span>
     </div>
 
@@ -37,7 +37,7 @@
         <form method="post" action="/login/student">
             <div class="login-field">
                 <label>Логин</label>
-                <input type="text" name="username" placeholder="student_login" required autocomplete="username">
+                <input type="text" name="username" role="student_login" required autocomplete="username">
             </div>
             <div class="login-field">
                 <label>Пароль</label>
@@ -54,11 +54,10 @@
         {% if error and active_tab == 'teacher' %}
         <div class="login-error">⚠ {{ error }}</div>
         {% endif %}
-
         <form method="post" action="/login/teacher">
             <div class="login-field">
                 <label>Логин</label>
-                <input type="text" name="username" placeholder="teacher_login" required autocomplete="username">
+                <input type="text" name="username" role="teacher_login" required autocomplete="username">
             </div>
             <div class="login-field">
                 <label>Пароль</label>
@@ -66,24 +65,19 @@
             </div>
             <button type="submit" class="login-btn">Войти как учитель</button>
         </form>
-
         <div class="login-divider">или</div>
-
         <button class="login-btn-admin" id="login-admin-toggle" onclick="loginToggleAdmin()">
             🔐 <span id="login-admin-toggle-text">Войти от имени администратора</span>
         </button>
-
         <div class="login-admin-form {% if active_tab == 'admin' %}open{% endif %}" id="login-admin-form">
             <div class="login-panel-title login-panel-title--admin">🛡 Администратор</div>
-
             {% if error and active_tab == 'admin' %}
             <div class="login-error">⚠ {{ error }}</div>
             {% endif %}
-
             <form method="post" action="/login/admin">
                 <div class="login-field">
                     <label>Логин администратора</label>
-                    <input type="text" name="username" placeholder="admin" required autocomplete="off">
+                    <input type="text" name="username" role="admin" required autocomplete="off">
                 </div>
                 <div class="login-field">
                     <label>Пароль</label>
