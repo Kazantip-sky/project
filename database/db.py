@@ -104,10 +104,6 @@ def init_db():
 # ── auth ──────────────────────────────────────────────────────────────────────
 
 def get_user_by_credentials(username: str, password: str) -> sqlite3.Row | None:
-    """
-    Возвращает пользователя если логин и пароль верные, иначе None.
-    Пароль сравнивается с SHA-256 хэшем.
-    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
