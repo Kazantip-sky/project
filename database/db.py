@@ -92,14 +92,12 @@ def init_db():
     ''')
 
     # 2. Миграции (добавление колонок в старые таблицы)
-    # Делаем это по одной команде в try/except, чтобы не было ошибки если колонка уже есть
-    
     migrations = [
         'ALTER TABLE students ADD COLUMN login TEXT',
         'ALTER TABLE students ADD COLUMN password TEXT',
         'ALTER TABLE students ADD COLUMN created_by INTEGER',
         'ALTER TABLE transactions ADD COLUMN created_by INTEGER',
-        # Вот самая важная колонка для прав учителей:
+        # Колонка для прав учителей:
         'ALTER TABLE users ADD COLUMN can_add_students INTEGER DEFAULT 0' 
     ]
 
@@ -108,20 +106,37 @@ def init_db():
             cursor.execute(sql)
             conn.commit()
         except Exception:
-            pass # Колонка уже существует, пропускаем ошибку
+            pass # Колонка уже существует, пропускаем
 
     # 3. Заполнение магазина тестовыми товарами (если пусто)
     cursor.execute("SELECT COUNT(*) FROM shop_items")
-    if cursor.fetchone()[0] == 0:
-        cursor.executescript('''
-            INSERT INTO shop_items (name, description, price, image_url, quantity, is_active, created_by)
-            VALUES 
-                ('Уточка‑джентльмен', 'Стильная уточка в шляпе', 100, '/static/images/duck_gentleman.jpg', -1, 1, 1),
-                ('Синяя уточка',     'Яркая синяя уточка',     75,  '/static/images/duck_blue.webp',      -1, 1, 1),
-                ('Уточка‑человек',   'Загадочная уточка',      120, '/static/images/duck_human.jpg',       -1, 1, 1),
-                ('Классическая уточка','Обычная резиновая уточка',50, '/static/images/duck.jpg',            -1, 1, 1);
-        ''')
-        conn.commit()
+    count = cursor.fetchone()[0]
+    
+    if count == 0:
+        print("️ Магазин пуст. Заполняем тестовыми товарами...")
+        try:
+            cursor.executescript('''
+                INSERT INTO shop_items (name, description, price, image_url, quantity, is_active, created_by)
+                VALUES 
+                    ('Уточка‑джентльмен',  'Стильная уточка в шляпе',  100,  '/static/images/duck_gentleman.jpg', -1, 1, 1),
+                    ('Синяя уточка',       'Яркая синяя уточка',       75,   '/static/images/duck_blue.webp',     -1, 1, 1),
+                    ('Уточка‑человек',     'Загадочная уточка',        120,  '/static/images/duck_human.jpg',     -1, 1, 1),
+                    ('Классическая уточка','Обычная резиновая уточка', 50,   '/static/images/duck.jpg',           -1, 1, 1),
+                    ('Антон',              'Антон не Чигур',           75,   '/static/images/anton.png',          -1, 1, 1),
+                    ('Артур',              'Артур Микаэлян',           100,  '/static/images/artur.png',          -1, 1, 1),
+                    ('Buggati',            'Буггага',                  5000, '/static/images/buggati.png',        -1, 1, 1),
+                    ('Быков',              'Быков',                    1000, '/static/images/bykov.png',          -1, 1, 1),
+                    ('Кузя',               'Кузя',                     500,  '/static/images/kuzy.png',           -1, 1, 1),
+                    ('Lamborgini',         'Ламба',                    2500, '/static/images/lamba.png',          -1, 1, 1),
+                    ('Лобанов',            'Лобанов',                  1000, '/static/images/lobanov.png',        -1, 1, 1),
+                    ('Nissan_gtr',         'Ниссанчик',                2500, '/static/images/nissan_gtr.png',     -1, 1, 1),
+                    ('Романенко',          'Романенко',                100,  '/static/images/romanenko.png',      -1, 1, 1),
+                    ('Котость',            'Котость в майне',          0,    '/static/images/kotosti.jpg',        -1, 1, 1);
+            ''')
+            conn.commit()
+            print("✅ Товары успешно добавлены в магазин.")
+        except Exception as e:
+            print("❌ Ошибка вставки товаров:", e)
 
     conn.close()
 
