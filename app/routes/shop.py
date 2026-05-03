@@ -36,6 +36,9 @@ def students_page(request: Request, user: dict = Depends(require_teacher_or_admi
     students = get_all_students()
     return templates.TemplateResponse(request, 'students/list.html', {'students': students})
 
+@router.get("/shop")
+def shop_redirect():
+    return RedirectResponse("/")
 
 @router.post('/shop/buy')
 def shop_buy(student_id: int = Form(...), item_id: int = Form(...)):
