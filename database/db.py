@@ -99,19 +99,43 @@ def init_db():
         except Exception:
             pass  
 
-    cursor.execute("SELECT COUNT(*) FROM shop_items")
-    if cursor.fetchone()[0] == 0:
-        cursor.executescript('''
-            INSERT INTO shop_items (name, description, price, image_url, quantity, is_active, created_by)
-            VALUES 
-                ('Уточка‑джентльмен', 'Стильная уточка в шляпе', 100, '/static/images/duck_gentleman.jpg', -1, 1, 1),
-                ('Синяя уточка',     'Яркая синяя уточка',     75,  '/static/images/duck_blue.webp',      -1, 1, 1),
-                ('Уточка‑человек',   'Загадочная уточка',      120, '/static/images/duck_human.jpg',       -1, 1, 1),
-                ('Классическая уточка','Обычная резиновая уточка',50, '/static/images/duck.jpg',            -1, 1, 1);
-        ''')
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='shop_items'")
+    if cursor.fetchone() is not None:
+        cursor.execute("SELECT COUNT(*) FROM shop_items")
+        row = cursor.fetchone()
+        count = row[0] if row is not None else 0
+        if count == 0:
+            print(123)
+            # Вставляем товары (убедитесь, что created_by = 1 существует)
+            try:
+                cursor.executescript('''
+                    INSERT INTO shop_items (name, description, price, image_url, quantity, is_active, created_by)
+                    VALUES 
+                        ('Уточка‑джентльмен',  'Стильная уточка в шляпе',  100,  '/static/images/duck_gentleman.jpg', -1, 1, NULL),
+                        ('Синяя уточка',       'Яркая синяя уточка',       75,   '/static/images/duck_blue.webp',     -1, 1, NULL),
+                        ('Уточка‑человек',     'Загадочная уточка',        120,  '/static/images/duck_human.jpg',     -1, 1, NULL),
+                        ('Классическая уточка','Обычная резиновая уточка', 50,   '/static/images/duck.jpg',           -1, 1, NULL),
+                        ('Антон',              'Антон не Чигур',           75,   '/static/images/anton.png',          -1, 1, NULL),
+                        ('Артур',              'Артур Микаэлян',           100,  '/static/images/artur.png',          -1, 1, NULL),
+                        ('Buggati',            'Буггага',                  5000, '/static/images/buggati.png',        -1, 1, NULL),
+                        ('Быков',              'Быков',                    1000, '/static/images/bykov.png',          -1, 1, NULL),
+                        ('Кузя',               'Кузя',                     500,  '/static/images/kuzy.png',           -1, 1, NULL),
+                        ('Lamborgini',         'Ламба',                    2500, '/static/images/lamba.png',          -1, 1, NULL),
+                        ('Лобанов',            'Лобанов',                  1000, '/static/images/lobanov.png',        -1, 1, NULL),
+                        ('Nissan_gtr',         'Ниссанчик',                2500, '/static/images/nissan_gtr.png',     -1, 1, NULL),
+                        ('Романенко',          'Романенко',                100,  '/static/images/romanenko.png',      -1, 1, NULL),
+                        ('Котость',            'Котость в майне',          0,    '/static/images/kotosti.jpg',          -1, 1, NULL);
+                ''')
+                print(f"Товары вставлены, проверка: {cursor.execute('SELECT COUNT(*) FROM shop_items').fetchone()[0]} записей")
+            except Exception as e:
+                print("Ошибка вставки товаров:", e)
+    else:
+        print("Таблица shop_items не создана! Проверьте синтаксис CREATE TABLE.")
 
     conn.commit()
     conn.close()
+
+ 
 
 # ── auth ──────────────────────────────────────────────────────────────────────
 
