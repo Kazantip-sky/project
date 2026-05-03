@@ -22,6 +22,8 @@ def get_connection():
 def init_db():
     conn = get_connection()
     cursor = conn.cursor()
+    
+    # 1. Создаем таблицы (если не существуют)
     cursor.executescript('''
         CREATE TABLE IF NOT EXISTS students (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,10 +51,11 @@ def init_db():
             full_name  TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
+    
         CREATE TABLE IF NOT EXISTS teacher_classes (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
             teacher_id INTEGER NOT NULL,
-            group_id   INTEGER NOT NULL,   
+            group_id   INTEGER NOT NULL,
             FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE,
             UNIQUE(teacher_id, group_id)
         );
@@ -88,17 +91,26 @@ def init_db():
         );
     ''')
 
-    for sql in [
+    # 2. Миграции (добавление колонок в старые таблицы)
+    # Делаем это по одной команде в try/except, чтобы не было ошибки если колонка уже есть
+    
+    migrations = [
         'ALTER TABLE students ADD COLUMN login TEXT',
         'ALTER TABLE students ADD COLUMN password TEXT',
         'ALTER TABLE students ADD COLUMN created_by INTEGER',
         'ALTER TABLE transactions ADD COLUMN created_by INTEGER',
-    ]:
+        # Вот самая важная колонка для прав учителей:
+        'ALTER TABLE users ADD COLUMN can_add_students INTEGER DEFAULT 0' 
+    ]
+
+    for sql in migrations:
         try:
             cursor.execute(sql)
+            conn.commit()
         except Exception:
-            pass  
+            pass # Колонка уже существует, пропускаем ошибку
 
+    # 3. Заполнение магазина тестовыми товарами (если пусто)
     cursor.execute("SELECT COUNT(*) FROM shop_items")
     if cursor.fetchone()[0] == 0:
         cursor.executescript('''
@@ -109,9 +121,10 @@ def init_db():
                 ('Уточка‑человек',   'Загадочная уточка',      120, '/static/images/duck_human.jpg',       -1, 1, 1),
                 ('Классическая уточка','Обычная резиновая уточка',50, '/static/images/duck.jpg',            -1, 1, 1);
         ''')
+        conn.commit()
 
-    conn.commit()
     conn.close()
+
 
 # ── auth ──────────────────────────────────────────────────────────────────────
 
@@ -157,8 +170,9 @@ def create_user(username: str, password: str, role: str, full_name: str):
 def get_all_teachers():
     conn = get_connection()
     cursor = conn.cursor()
+    # Запрашиваем также колонку can_add_students
     cursor.execute(
-        "SELECT id, username, full_name, created_at FROM users WHERE role = 'teacher'"
+        "SELECT id, username, full_name, created_at, can_add_students FROM users WHERE role = 'teacher'"
     )
     teachers = cursor.fetchall()
     conn.close()
@@ -499,3 +513,17 @@ def get_all_items_admin():
     items = cursor.fetchall()
     conn.close()
     return items
+
+def toggle_teacher_student_rights(teacher_id: int):
+    conn = get_connection()
+    cursor = conn.cursor()
+    # Сначала узнаем текущее состояние
+    cursor.execute("SELECT can_add_students FROM users WHERE id = ?", (teacher_id,))
+    row = cursor.fetchone()
+    
+    if row:
+        current_state = row['can_add_students']
+        new_state = 1 if current_state == 0 else 0
+        cursor.execute("UPDATE users SET can_add_students = ? WHERE id = ?", (new_state, teacher_id))
+        conn.commit()
+    conn.close()

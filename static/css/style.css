@@ -352,8 +352,11 @@ input, select {
 /* ── LOGIN HISTORY ── */
 
 .page-header {
-    margin-bottom: 1.5rem;
+    margin-top: 0;
+    padding-top: 10px;
+    margin-bottom: 20px;
 }
+
 
 .back-link {
     font-size: .85rem;

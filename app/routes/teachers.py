@@ -7,11 +7,13 @@ from database.db import (
     get_teacher_by_id,
     create_user,
     delete_teacher,
-    assign_teacher_to_group,   
-    get_teacher_groups,           
-    remove_teacher_from_group,    
+    assign_teacher_to_group,
+    get_teacher_groups,
+    remove_teacher_from_group,
     hash_password,
+    toggle_teacher_student_rights,  # <-- Добавили
 )
+
 from app.routes.auth import require_admin
 
 router = APIRouter()
@@ -91,4 +93,12 @@ def remove_teacher(
     user: dict = Depends(require_admin),
 ):
     delete_teacher(teacher_id)
+    return RedirectResponse("/teachers", status_code=303)
+
+@router.post("/teachers/{teacher_id}/toggle-rights")
+def toggle_rights(
+    teacher_id: int,
+    user: dict = Depends(require_admin),
+):
+    toggle_teacher_student_rights(teacher_id)
     return RedirectResponse("/teachers", status_code=303)

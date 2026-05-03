@@ -6,6 +6,8 @@ from fastapi.templating import Jinja2Templates
 
 import sys
 import os
+
+# Добавляем путь к проекту для корректных импортов
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from database.db import (
@@ -49,12 +51,12 @@ def index(request: Request):
     user = get_current_user(request.cookies.get("session_token"))
     if not user:
         return RedirectResponse("/login", status_code=302)
-    # return templates.TemplateResponse("shop/index.html", {"request": request, "user": user})
     return templates.TemplateResponse(
-    request=request,
-    name="shop/index.html",
-    context={"user": user}
-)
+        request=request,
+        name="shop/index.html",
+        context={"user": user}
+    )
+
 # Инициализация БД при старте
 @app.on_event("startup")
 def on_startup():
@@ -66,11 +68,13 @@ def _seed_admin():
     conn = get_connection()
     count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
     conn.close()
+    
+    # Если пользователей нет вообще - создаем админа
     if count == 0:
         create_user(
             username="admin",
             password=hash_password("admin123"),
-            user_role="admin",
+            role="admin",        # <--- ИСПРАВЛЕНО: было user_role, должно быть role
             full_name="Администратор",
         )
         print("✅ Создан администратор: admin / admin123 — СМЕНИТЕ ПАРОЛЬ!")

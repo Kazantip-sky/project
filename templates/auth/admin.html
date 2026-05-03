@@ -2,27 +2,37 @@
 {% block title %}Администрирование{% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <h1>Панель администратора</h1>
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+  <h1 style="margin: 0;">Панель администратора</h1>
   <a href="/admin/users/add" class="btn-primary">+ Добавить пользователя</a>
 </div>
 
 <div class="admin-actions">
   <a href="/admin/login-log" class="action-card">📋 История входов</a>
-  <a href="/teachers" class="action-card">👩‍🏫 Учителя</a>
+  <a href="/teachers" class="action-card">‍🏫 Учителя</a>
   <a href="/students" class="action-card">🎓 Ученики</a>
 </div>
 
-<h2>Пользователи</h2>
+<!-- Добавлен отступ margin-top: 40px -->
+<h2 style="margin-top: 40px;">Пользователи</h2>
 
 <table class="data-table">
+<!-- Добавлены заголовки столбцов -->
+<thead>
+  <tr>
+    <th>Логин</th>
+    <th>Имя</th>
+    <th>Роль</th>
+  </tr>
+</thead>
+<tbody>
 {% for u in users %}
 <tr>
-  <td>{{ u.id }}</td>
   <td>{{ u.username }}</td>
   <td>{{ u.full_name }}</td>
   <td>{{ u.role }}</td>
 </tr>
 {% endfor %}
+</tbody>
 </table>
 {% endblock %}

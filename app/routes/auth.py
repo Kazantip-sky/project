@@ -61,8 +61,9 @@ def log_login_attempt(
 ):
     _ensure_login_log_table()
     conn = get_connection()
+    # Добавляем created_at и используем localtime для московского времени
     conn.execute(
-        "INSERT INTO login_log (username, success, ip_address, user_id, role) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO login_log (username, success, ip_address, user_id, role, created_at) VALUES (?, ?, ?, ?, ?, datetime('now', 'localtime'))",
         (username, int(success), ip, user_id, role),
     )
     conn.commit()
