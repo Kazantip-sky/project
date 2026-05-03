@@ -49,8 +49,12 @@ def index(request: Request):
     user = get_current_user(request.cookies.get("session_token"))
     if not user:
         return RedirectResponse("/login", status_code=302)
-    return templates.TemplateResponse("shop/index.html", {"request": request, "user": user})
-
+    # return templates.TemplateResponse("shop/index.html", {"request": request, "user": user})
+    return templates.TemplateResponse(
+    request=request,
+    name="shop/index.html",
+    context={"user": user}
+)
 # Инициализация БД при старте
 @app.on_event("startup")
 def on_startup():

@@ -52,7 +52,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS teacher_classes (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
             teacher_id INTEGER NOT NULL,
-            group_id   INTEGER NOT NULL,   -- было class_name
+            group_id   INTEGER NOT NULL,   
             FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE,
             UNIQUE(teacher_id, group_id)
         );
@@ -123,7 +123,6 @@ def get_user_by_credentials(username: str, password: str) -> sqlite3.Row | None:
 
 
 def get_user_by_id(user_id: int) -> sqlite3.Row | None:
-    """Возвращает пользователя по ID (используется для восстановления сессии)."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))
@@ -135,7 +134,6 @@ def get_user_by_id(user_id: int) -> sqlite3.Row | None:
 # ── users / teachers ──────────────────────────────────────────────────────────
 
 def create_user(username: str, password: str, role: str, full_name: str):
-    """Создаёт пользователя. Пароль должен быть уже хэширован через hash_password()."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
