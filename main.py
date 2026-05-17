@@ -84,7 +84,7 @@ def _seed_admin():
         create_user(
             username="admin",
             password=hash_password("admin123"),
-            role="admin",  # Аргумент указан только один раз
+            role="admin", # Аргумент указан только один раз
             full_name="Администратор",
         )
         print("✅ Создан администратор: admin / admin123 — СМЕНИТЕ ПАРОЛЬ!")
