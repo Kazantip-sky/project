@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Начислить монеты — {{ student.name }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Начислить монеты</h1>
+    <p>Студент: <strong>{{ student.name }}</strong> (группа {{ student.id_group or '—' }})</p>
+    <p>Текущий баланс: <span style="color: #f59e0b; font-weight: 700;">🪙 {{ student.coins }}</span></p>
+</section>
+
+<div class="form-container" style="max-width: 500px; margin: 0 auto;">
+    <form action="/students/{{ student.id }}/add-coins" method="post" class="form-card">
+        <div class="field">
+            <label for="amount">Количество монет</label>
+            <input type="number" name="amount" id="amount" min="1" required placeholder="Например, 10">
+        </div>
+        <div class="field">
+            <label for="reason">Причина (необязательно)</label>
+            <input type="text" name="reason" id="reason" placeholder="За активность на уроке, победу в конкурсе и т.д.">
+        </div>
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button type="submit" class="login-btn">✅ Начислить</button>
+            <a href="/students/{{ student.id }}" class="login-btn-admin" style="text-align: center; text-decoration: none;">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

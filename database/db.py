@@ -121,7 +121,7 @@ def init_db():
                     ('Синяя уточка',       'Яркая синяя уточка',       75,   '/static/images/duck_blue.webp',     -1, 1, 1),
                     ('Уточка‑человек',     'Загадочная уточка',        120,  '/static/images/duck_human.jpg',     -1, 1, 1),
                     ('Классическая уточка','Обычная резиновая уточка', 50,   '/static/images/duck.jpg',           -1, 1, 1),
-                    ('Антон',              'Антон не Чигур',           75,   '/static/images/anton.png',          -1, 1, 1),
+                    ('Антон',              'Антон',                    75,   '/static/images/anton.png',          -1, 1, 1),
                     ('Артур',              'Артур Микаэлян',           100,  '/static/images/artur.png',          -1, 1, 1),
                     ('Buggati',            'Буггага',                  5000, '/static/images/buggati.png',        -1, 1, 1),
                     ('Быков',              'Быков',                    1000, '/static/images/bykov.png',          -1, 1, 1),

@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Form, Request, Depends
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Form, Request, Depends, HTTPException
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from database.db import (
     get_all_students, create_student, delete_student,
     get_student_by_id, get_student_transactions, get_student_purchases,
+    add_coins_by_teacher, get_teacher_groups,
 )
-from app.routes.auth import require_user, require_admin
+from app.routes.auth import require_user, require_admin, require_teacher_or_admin
+from typing import Optional
+
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
