@@ -11,7 +11,7 @@
         <p class="shop-hero__subtitle">Трать монеты с умом — выбирай лучшее!</p>
     </div>
 
-    {% if student %}
+    {% if user and user.role == 'student' %}
     <div class="balance-card">
         <div class="balance-card__icon">💳</div>
         <div>

@@ -18,8 +18,8 @@
     </div>
 
     <div class="item-card__body">
-        {% if item.category %}
-            <span class="item-card__category">{{ item.category }}</span>
+        {% if item.category_name %}
+            <span class="item-card__category">{{ item.category_name }}</span>
         {% endif %}
         <h3 class="item-card__name">{{ item.name }}</h3>
         {% if item.description %}
@@ -33,18 +33,20 @@
         </span>
 
         {% if item.quantity != 0 and item.is_active %}
-            <form action="/shop/buy" method="post" class="item-card__form">
-                <input type="hidden" name="item_id" value="{{ item.id }}">
-                <input type="hidden" name="student_id" value="{{ student.id }}">
-                <button
-                    type="submit"
-                    class="btn-buy {% if student.coins < item.price %}btn-buy--disabled{% endif %}"
-                    {% if student.coins < item.price %}disabled title="Недостаточно монет"{% endif %}
-                    data-price="{{ item.price }}"
-                >
-                    {% if student.coins < item.price %}Не хватает{% else %}Купить{% endif %}
-                </button>
-            </form>
+            {# Только если есть студент (залогиненный ученик) #}
+            {% if student %}
+                <form action="/shop/buy" method="post" class="item-card__form">
+                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                    <input type="hidden" name="student_id" value="{{ student.id }}">
+                    <button type="submit"
+                            class="btn-buy {% if student.coins < item.price %}btn-buy--disabled{% endif %}"
+                            {% if student.coins < item.price %}disabled title="Недостаточно монет"{% endif %}>
+                        {% if student.coins < item.price %}Не хватает{% else %}Купить{% endif %}
+                    </button>
+                </form>
+            {% else %}
+                <button class="btn-buy btn-buy--disabled" disabled>Войдите как студент</button>
+            {% endif %}
         {% else %}
             <button class="btn-buy btn-buy--disabled" disabled>Недоступно</button>
         {% endif %}

@@ -17,6 +17,7 @@ from database.db import (
     hash_password,
     get_all_items,
     get_all_categories,
+    get_student_by_id
 )
 
 from app.routes.students import router as students_router
@@ -54,17 +55,16 @@ def index(request: Request):
     user = get_current_user(request.cookies.get("session_token"))
     if not user:
         return RedirectResponse("/login", status_code=302)
-    
-    # Получаем товары для отображения в магазине
-    items = get_all_items()
 
+    student = None
+    if user.get("role") == "student":
+        student = get_student_by_id(user["id"])
+
+    items = get_all_items()
     return templates.TemplateResponse(
-        request=request,
-        name="shop/index.html",
-        context={
-            "user": user,
-            "items": items
-        }
+        request,
+        "shop/index.html",
+        {"user": user, "student": student, "items": items}
     )
 
 # Инициализация БД при старте
@@ -84,7 +84,7 @@ def _seed_admin():
         create_user(
             username="admin",
             password=hash_password("admin123"),
-            role="admin", # Аргумент указан только один раз
+            role="admin",  # Аргумент указан только один раз
             full_name="Администратор",
         )
         print("✅ Создан администратор: admin / admin123 — СМЕНИТЕ ПАРОЛЬ!")

@@ -97,7 +97,6 @@ def init_db():
         'ALTER TABLE students ADD COLUMN password TEXT',
         'ALTER TABLE students ADD COLUMN created_by INTEGER',
         'ALTER TABLE transactions ADD COLUMN created_by INTEGER',
-        # Колонка для прав учителей:
         'ALTER TABLE users ADD COLUMN can_add_students INTEGER DEFAULT 0' 
     ]
 
@@ -376,7 +375,8 @@ def get_all_items():
             si.price,
             si.quantity,
             si.image_url,
-            sc.name AS category_name
+            sc.name AS category_name,
+            si.is_active
         FROM shop_items si
         LEFT JOIN shop_categories sc ON si.category_id = sc.id
         WHERE si.is_active = 1
@@ -460,15 +460,16 @@ def buy_item(student_id: int, item_id: int) -> dict:
     conn = get_connection()
     cursor = conn.cursor()
 
+    print(f"[DEBUG] buy_item student_id={student_id}, item_id={item_id}")
+
+    cursor.execute('SELECT id, name, price, quantity, is_active FROM shop_items WHERE id = ?', (item_id,))
+    item = cursor.fetchone()
+    print(f"[DEBUG] item = {dict(item) if item else None}")
+
     try:
         conn.execute('BEGIN IMMEDIATE')
-
-        cursor.execute(
-            'SELECT id, name, price, quantity, is_active FROM shop_items WHERE id = ?',
-            (item_id,)
-        )
+        cursor.execute('SELECT id, name, price, quantity, is_active FROM shop_items WHERE id = ?', (item_id,))
         item = cursor.fetchone()
-
         if not item:
             return {'ok': False, 'error': 'Товар не найден'}
         if not item['is_active']:
@@ -476,9 +477,15 @@ def buy_item(student_id: int, item_id: int) -> dict:
         if item['quantity'] == 0:
             return {'ok': False, 'error': 'Товар закончился'}
 
+        if item['price'] == 0:
+            # Покупка бесплатного товара: не проверяем баланс и не уменьшаем монеты
+            cursor.execute('INSERT INTO purchases (student_id, item_id, price_paid) VALUES (?, ?, ?)',
+                           (student_id, item_id, 0))
+            conn.commit()
+            return {'ok': True}
+
         cursor.execute('SELECT coins FROM students WHERE id = ?', (student_id,))
         student = cursor.fetchone()
-
         if not student:
             return {'ok': False, 'error': 'Студент не найден'}
         if student['coins'] < item['price']:
