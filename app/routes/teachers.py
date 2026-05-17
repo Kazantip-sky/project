@@ -12,14 +12,17 @@ from database.db import (
     remove_teacher_from_group,    
     hash_password,
 )
-from app.routes.auth import require_admin
+from app.routes.auth import (
+    require_admin,
+    require_teacher_or_admin
+)
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/teachers")
-def teachers_page(request: Request, user: dict = Depends(require_admin)):
+def teachers_page(request: Request, user: dict = Depends(require_teacher_or_admin)):
     teachers = get_all_teachers()
     return templates.TemplateResponse(
         request, "teachers/list.html", {"teachers": teachers, "user": user}

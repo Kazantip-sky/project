@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование учителя{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <a href="/teachers" class="back-link">
+        ← Назад
+    </a>
+
+    <h1 class="page-title">
+        Редактирование учителя
+    </h1>
+
+    <form method="post"
+          action="/teachers/{{ teacher.id }}/edit"
+          class="form-card">
+
+        <div class="field">
+            <label>Полное имя</label>
+
+            <input
+                type="text"
+                name="full_name"
+                value="{{ teacher.full_name }}"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Логин</label>
+
+            <input
+                type="text"
+                name="username"
+                value="{{ teacher.username }}"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Роль</label>
+
+            <select name="role">
+
+                <option value="teacher"
+                    {% if teacher.role == 'teacher' %}
+                        selected
+                    {% endif %}
+                >
+                    teacher
+                </option>
+
+                <option value="admin"
+                    {% if teacher.role == 'admin' %}
+                        selected
+                    {% endif %}
+                >
+                    admin
+                </option>
+
+            </select>
+        </div>
+
+        <button class="btn-submit">
+            💾 Сохранить
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

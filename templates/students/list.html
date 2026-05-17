@@ -1,9 +1,26 @@
 {% extends 'base.html' %}
+
 {% block content %}
 
 <section class="page-header">
-    <h1>Студенты</h1>
-    <a href="/students/add" class="btn">+ Добавить</a>
+
+    <div>
+        {% if user.role == 'student' %}
+            <h1>
+                {% if students|length > 1 %}
+                    Мои группы
+                {% else %}
+                    Моя группа
+                {% endif %}
+            </h1>
+        {% else %}
+            <h1>Студенты</h1>
+        {% endif %}
+    </div>
+
+    {% if user.role in ('admin', 'teacher') %}
+        <a href="/students/add" class="btn">+ Добавить</a>
+    {% endif %}
 </section>
 
 <section class="students-grid">
@@ -11,4 +28,5 @@
         {% include 'students/card.html' %}
     {% endfor %}
 </section>
+
 {% endblock %}

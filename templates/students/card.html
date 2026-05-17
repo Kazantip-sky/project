@@ -1,12 +1,33 @@
 <div class="student-card">
-    <h2>{{ student.name }}</h2>
-    <span class="coins">{{ student.coins }} монет</span>
-    <span class="class">{{ student.id_group }}</span>
-    <a href="/students/{{ student.id }}">Подробнее</a>
 
-    <form action="/student/delete" method="post"
-          onsubmit="return confirm('Удалить {{ student.name }}?')">
-        <input type="hidden" name="student_id" value="{{ student.id }}">
-        <button type="submit" class="btn-delete">🗑 Удалить</button>
-    </form>
+    <h2>{{ student.name }}</h2>
+
+    <span class="coins">
+        💵 {{ student.coins }} монет
+    </span>
+
+    <span class="class">
+        👥 Группа: {{ student.id_group or '—' }}
+    </span>
+
+    <a href="/students/{{ student.id }}" class="btn-sm">
+        Подробнее
+    </a>
+
+    {% if user.role in ('admin', 'teacher') %}
+    <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap;">
+
+        <form action="/student/delete" method="post"
+              onsubmit="return confirm('Удалить {{ student.name }}?')">
+
+            <input type="hidden" name="student_id" value="{{ student.id }}">
+
+            <button type="submit" class="btn-delete">
+                🗑 Удалить
+            </button>
+        </form>
+
+    </div>
+    {% endif %}
+
 </div>

@@ -3,6 +3,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.templating import Jinja2Templates
+from app.routes import auth
+from app.routes import students
+from app.routes import teachers
 
 import sys
 import os
@@ -37,7 +40,7 @@ async def redirect_exception_handler(request: Request, exc: _RedirectException):
 # Подключение роутеров
 app.include_router(auth_router)
 app.include_router(students_router)
-app.include_router(teachers_router)
+app.include_router(teachers.router)
 app.include_router(shop_router)
 
 # Статика

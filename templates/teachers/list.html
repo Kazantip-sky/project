@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Учителя{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <h1>Учителя</h1>
+
+    {% if user.role == 'admin' %}
+    <a href="/admin/users/add" class="btn">
+        + Добавить учителя
+    </a>
+    {% endif %}
+</section>
+
+<div class="students-grid">
+
+    {% for teacher in teachers %}
+
+    <div class="student-card">
+
+        <h2>{{ teacher.full_name }}</h2>
+
+        <span class="class">
+            👤 {{ teacher.username }}
+        </span>
+
+        <span class="coins">
+            Роль: {{ teacher.role }}
+        </span>
+
+        {% if user.role == 'admin' %}
+        <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap;">
+
+            <a href="/teachers/{{ teacher.id }}/edit"
+               class="btn-sm">
+               ✏ Изменить
+            </a>
+
+            <form action="/teachers/delete" method="post"
+                  onsubmit="return confirm('Удалить учителя?')">
+
+                <input type="hidden"
+                       name="teacher_id"
+                       value="{{ teacher.id }}">
+
+                <button type="submit"
+                        class="btn-delete">
+
+                    🗑 Удалить
+                </button>
+            </form>
+
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

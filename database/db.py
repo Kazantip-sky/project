@@ -15,7 +15,7 @@ def get_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
-
+    
 
 # ── init ──────────────────────────────────────────────────────────────────────
 
@@ -34,12 +34,12 @@ def init_db():
             created_by INTEGER
         );
         CREATE TABLE IF NOT EXISTS transactions (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            student_id INTEGER NOT NULL,
-            amount     INTEGER NOT NULL,
-            reason     TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (student_id) REFERENCES students(id)
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER,
+            amount INTEGER,
+            reason TEXT,
+            teacher_name TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         CREATE TABLE IF NOT EXISTS users (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -300,8 +300,13 @@ def add_coins_by_teacher(teacher_id: int, student_id: int, amount: int, reason: 
 def get_student_transactions(student_id: int):
     conn = get_connection()
     cursor = conn.cursor()
+
     cursor.execute('''
-        SELECT amount, reason, created_at
+        SELECT
+            amount,
+            reason,
+            teacher_name,
+            created_at
         FROM transactions
         WHERE student_id = ?
         ORDER BY created_at DESC
@@ -523,3 +528,56 @@ def get_all_items_admin():
     items = cursor.fetchall()
     conn.close()
     return items
+def add_student_coins(student_id: int, amount: int):
+    conn = get_connection()
+
+    conn.execute("""
+        UPDATE students
+        SET coins = coins + ?
+        WHERE id = ?
+    """, (amount, student_id))
+
+    conn.commit()
+    conn.close()
+
+
+def remove_student_coins(student_id: int, amount: int):
+    conn = get_connection()
+
+    conn.execute("""
+        UPDATE students
+        SET coins =
+            CASE
+                WHEN coins - ? < 0 THEN 0
+                ELSE coins - ?
+            END
+        WHERE id = ?
+    """, (amount, amount, student_id))
+
+    conn.commit()
+    conn.close()
+def add_student_transaction(
+    student_id: int,
+    amount: int,
+    reason: str,
+    teacher_name: str
+):
+    conn = get_connection()
+
+    conn.execute("""
+        INSERT INTO transactions (
+            student_id,
+            amount,
+            reason,
+            teacher_name
+        )
+        VALUES (?, ?, ?, ?)
+    """, (
+        student_id,
+        amount,
+        reason,
+        teacher_name
+    ))
+
+    conn.commit()
+    conn.close()

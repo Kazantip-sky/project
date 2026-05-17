@@ -2,6 +2,7 @@ from fastapi import APIRouter, Cookie, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from typing import Optional
+from fastapi import HTTPException
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from database.db import (
     get_connection,
@@ -391,3 +392,8 @@ def set_student_credentials(
         {"user": user, "student": dict(student),
          "error": None, "success": f"Логин и пароль для {student['name']} обновлены!"},
     )
+def require_teacher_or_admin(user: dict = Depends(require_user)):
+    if user["role"] not in ("admin", "teacher"):
+        raise HTTPException(status_code=403)
+
+    return user
