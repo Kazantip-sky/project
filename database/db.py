@@ -118,7 +118,6 @@ def init_db():
             cursor.executescript('''
                 INSERT INTO shop_items (name, description, price, image_url, quantity, is_active, created_by)
                 VALUES 
-                    ('Уточка‑джентльмен',  'Стильная уточка в шляпе',  100,  '/static/images/duck_gentleman.jpg', -1, 1, 1),
                     ('Синяя уточка',       'Яркая синяя уточка',       75,   '/static/images/duck_blue.webp',     -1, 1, 1),
                     ('Уточка‑человек',     'Загадочная уточка',        120,  '/static/images/duck_human.jpg',     -1, 1, 1),
                     ('Классическая уточка','Обычная резиновая уточка', 50,   '/static/images/duck.jpg',           -1, 1, 1),

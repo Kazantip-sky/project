@@ -138,11 +138,11 @@ def require_teacher_or_admin(user: Optional[dict] = Depends(get_current_user)) -
         raise _redirect("/403")
     return user
 
-def require_student(user: Optional[dict] = Depends(get_current_user)) -> dict:
+def require_user(user: Optional[dict] = Depends(get_current_user)) -> dict:
     if not user:
-        raise _redirect("/login")
-    if user.get("role") != "student":
-        raise _redirect("/403")
+        response = RedirectResponse("/login", status_code=303)
+        response.delete_cookie(SESSION_COOKIE)
+        raise _redirect(response)   
     return user
 
 # ─── вспомогательная функция: установить куки и редиректнуть ─────────────────
@@ -163,12 +163,18 @@ def _make_session_response(user_id: int, role: str, redirect_url: str) -> Redire
 
 @router.get("/login")
 def login_page(request: Request, session_token: str = Cookie(default=None)):
-    if session_token and decode_session_token(session_token):
+    # Проверяем не просто токен, а реального пользователя
+    user = get_current_user(session_token) if session_token else None
+    if user:
         return RedirectResponse("/", status_code=302)
-    return templates.TemplateResponse(
+    
+    response = templates.TemplateResponse(
         request, "auth/login.html",
         {"error": None, "active_tab": "student"}
     )
+    if session_token:
+        response.delete_cookie(SESSION_COOKIE)
+    return response
 
 # ─── POST /login/student ──────────────────────────────────────────────────────
 
